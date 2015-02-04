@@ -52,10 +52,11 @@ public class WeatherFragment extends Fragment{
     }
 
     private void updateWeatherData(final String city){
+
         new Thread(){
             public void run(){
-                final JSONObject json = RemoteFetch.getGeocodeJSON(getActivity(), city);
-                if(json == null){
+                final JSONObject geocodeJSON = RemoteFetch.getGeocodeJSON(city);
+                if(geocodeJSON == null){
                     handler.post(new Runnable(){
                         public void run(){
                             Toast.makeText(getActivity(),
@@ -66,12 +67,53 @@ public class WeatherFragment extends Fragment{
                 } else {
                     handler.post(new Runnable(){
                         public void run(){
-                            renderWeather(json);
+                            new Thread() {
+                                public void run() {
+                                    long lat;
+                                    long lng;
+                                    lat = getLat(geocodeJSON);
+                                    lng = getLng(geocodeJSON);
+                                    cityField.setText(getAddress(geocodeJSON));
+                                    final JSONObject forecastJSON = RemoteFetch.getForecastJSON(lat, lng);
+                                    renderWeather(forecastJSON);
+                                }
+                            }.start();
                         }
                     });
                 }
             }
         }.start();
+
+    }
+
+    private long getLat(JSONObject json) {
+        try {
+            return json.getJSONObject("results").getJSONObject("geometry").getJSONObject("location").getLong("lat");
+        }
+        catch(Exception e) {
+            Log.e("MakeRelative", "Failed to get lat from geocode JSON");
+            return 0;
+        }
+    }
+
+    private long getLng(JSONObject json) {
+        try {
+            return json.getJSONObject("results").getJSONObject("geometry").getJSONObject("location").getLong("lng");
+        }
+        catch(Exception e) {
+            Log.e("MakeRelative", "Failed to get lng from geocode JSON");
+            return 0;
+        }
+    }
+
+    private String getAddress(JSONObject json) {
+        try {
+            return json.getJSONObject("results").getString("formatted_address");
+        }
+        catch(Exception e) {
+            Log.e("MakeRelative", "Failed to get formatted address from geocode JSON");
+            return null;
+        }
     }
 
     private void renderWeather(JSONObject json){
@@ -95,7 +137,7 @@ public class WeatherFragment extends Fragment{
             updatedField.setText("Last update: " + updatedOn);
 
         }catch(Exception e){
-            Log.e("SimpleWeather", "One or more fields not found in the JSON data");
+            Log.e("MakeRelative", "One or more fields not found in the JSON data");
         }
     }
 }

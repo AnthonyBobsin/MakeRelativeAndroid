@@ -18,7 +18,7 @@ public class RemoteFetch {
     private static final String FORECAST_API = "https://api.forecast.io/forecast/94554c8a6559d0c2c5cd86c818780f32/%f,%f?units=si";
     private static final String GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyD7n4UdliKbLCTfpZ6D-mwERJqs8Ro-2Gw&address=%s&sensor=true";
 
-    public static JSONObject getGeocodeJSON(Context context, String city) {
+    public static JSONObject getGeocodeJSON(String city) {
         try {
             URL url = new URL(String.format(GEOCODE_API, city));
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
@@ -46,7 +46,7 @@ public class RemoteFetch {
         }
     }
 
-    public static JSONObject getForecastJSON(float lat, float lng) {
+    public static JSONObject getForecastJSON(long lat, long lng) {
         try {
             URL url = new URL(String.format(FORECAST_API, lat, lng));
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
