@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -55,7 +55,8 @@ public class WeatherFragment extends Fragment{
 
         new Thread(){
             public void run(){
-                final JSONObject geocodeJSON = RemoteFetch.getGeocodeJSON(city);
+                final JSONObject geocodeJSON = RemoteFetch.getGeocodeJSON(city.replaceAll("\\s",""));
+                //final JSONObject geocodeJSON = RemoteFetch.getGeocodeJSON("Toronto");
                 if(geocodeJSON == null){
                     handler.post(new Runnable(){
                         public void run(){
@@ -67,15 +68,28 @@ public class WeatherFragment extends Fragment{
                 } else {
                     handler.post(new Runnable(){
                         public void run(){
+                            cityField.setText(getAddress(geocodeJSON));
+                            final String lat = getLat(geocodeJSON);
+                            final String lng = getLng(geocodeJSON);
                             new Thread() {
                                 public void run() {
-                                    long lat;
-                                    long lng;
-                                    lat = getLat(geocodeJSON);
-                                    lng = getLng(geocodeJSON);
-                                    cityField.setText(getAddress(geocodeJSON));
                                     final JSONObject forecastJSON = RemoteFetch.getForecastJSON(lat, lng);
-                                    renderWeather(forecastJSON);
+                                    if (forecastJSON == null) {
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                Toast.makeText(getActivity(),
+                                                        getActivity().getString(R.string.forecast_not_found),
+                                                        Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                renderWeather(forecastJSON);
+                                            }
+                                        });
+                                    }
                                 }
                             }.start();
                         }
@@ -83,32 +97,31 @@ public class WeatherFragment extends Fragment{
                 }
             }
         }.start();
-
     }
 
-    private long getLat(JSONObject json) {
+    private String getLat(JSONObject json) {
         try {
-            return json.getJSONObject("results").getJSONObject("geometry").getJSONObject("location").getLong("lat");
+            return json.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getString("lat");
         }
         catch(Exception e) {
             Log.e("MakeRelative", "Failed to get lat from geocode JSON");
-            return 0;
+            return null;
         }
     }
 
-    private long getLng(JSONObject json) {
+    private String getLng(JSONObject json) {
         try {
-            return json.getJSONObject("results").getJSONObject("geometry").getJSONObject("location").getLong("lng");
+            return json.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getString("lng");
         }
         catch(Exception e) {
             Log.e("MakeRelative", "Failed to get lng from geocode JSON");
-            return 0;
+            return null;
         }
     }
 
     private String getAddress(JSONObject json) {
         try {
-            return json.getJSONObject("results").getString("formatted_address");
+            return json.getJSONArray("results").getJSONObject(0).getString("formatted_address");
         }
         catch(Exception e) {
             Log.e("MakeRelative", "Failed to get formatted address from geocode JSON");
@@ -118,26 +131,25 @@ public class WeatherFragment extends Fragment{
 
     private void renderWeather(JSONObject json){
         try {
-            cityField.setText(json.getString("name").toUpperCase(Locale.US) +
-                    ", " +
-                    json.getJSONObject("sys").getString("country"));
-
-            JSONObject details = json.getJSONArray("weather").getJSONObject(0);
-            JSONObject main = json.getJSONObject("main");
+            JSONObject currently = json.getJSONObject("currently");
             detailsField.setText(
-                    details.getString("description").toUpperCase(Locale.US) +
-                            "\n" + "Humidity: " + main.getString("humidity") + "%" +
-                            "\n" + "Pressure: " + main.getString("pressure") + " hPa");
+                    currently.getString("summary").toUpperCase(Locale.US) +
+                            "\n" + "Precipitation: " + currently.getString("precipProbability") + "%" +
+                            "\n" + "Humidity: " + currently.getString("humidity") + " %");
 
             currentTemperatureField.setText(
-                    String.format("%.2f", main.getDouble("temp"))+ " ℃");
+                    String.format("%.2f", currently.getDouble("temperature"))+ " ℃");
 
             DateFormat df = DateFormat.getDateTimeInstance();
-            String updatedOn = df.format(new Date(json.getLong("dt")*1000));
+            String updatedOn = df.format(new Date(currently.getLong("time")*1000));
             updatedField.setText("Last update: " + updatedOn);
 
         }catch(Exception e){
             Log.e("MakeRelative", "One or more fields not found in the JSON data");
         }
+    }
+
+    public void changeCity(String city){
+        updateWeatherData(city);
     }
 }

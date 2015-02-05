@@ -6,6 +6,7 @@
     <string name="change_city">Change City</string>
     <string name="action_settings">Settings</string>
 
-    <string name="place_not_found">Sorry, no weather data found.</string>
+    <string name="place_not_found">Sorry, no location data found.</string>
+    <string name="forecast_not_found">Sorry, no weather data found.</string>
 
 </resources>
