@@ -1,13 +1,13 @@
 package uberkraft.makerelative;
 
-import android.util.Log;
-import android.widget.TextView;
-import android.os.Handler;
-import android.view.View;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -16,40 +16,39 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-
 /**
- * Created by Azalea on 2015-02-03.
+ * Created by Azalea on 2015-02-05.
  */
-public class WeatherFragment extends Fragment{
+public class YesterdayFragment extends Fragment{
 
-    TextView cityField;
-    TextView updatedField;
-    TextView detailsField;
-    TextView currentTemperatureField;
+    TextView yesterdayCityField;
+    TextView yesterdayUpdatedField;
+    TextView yesterdayDetailsField;
+    TextView yesterdayTemperatureField;
 
     Handler handler;
 
-    public WeatherFragment(){
+    public YesterdayFragment(){
         handler = new Handler();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
-        cityField = (TextView)rootView.findViewById(R.id.city_field);
-        updatedField = (TextView)rootView.findViewById(R.id.updated_field);
-        detailsField = (TextView)rootView.findViewById(R.id.details_field);
-        currentTemperatureField = (TextView)rootView.findViewById(R.id.current_temperature_field);
+        View rootView = inflater.inflate(R.layout.fragment_yesterday, container, false);
+        yesterdayCityField = (TextView)rootView.findViewById(R.id.yesterday_city_field);
+        yesterdayUpdatedField = (TextView)rootView.findViewById(R.id.yesterday_updated_field);
+        yesterdayDetailsField = (TextView)rootView.findViewById(R.id.yesterday_details_field);
+        yesterdayTemperatureField = (TextView)rootView.findViewById(R.id.yesterday_temperature_field);
 
         return rootView;
     }
 
-    public static WeatherFragment newInstance(String text) {
-        WeatherFragment today = new WeatherFragment();
+    public static YesterdayFragment newInstance(String text) {
+        YesterdayFragment yesterday = new YesterdayFragment();
         //Bundle b = new Bundle();
 
-        return today;
+        return yesterday;
     }
 
     @Override
@@ -75,12 +74,12 @@ public class WeatherFragment extends Fragment{
                 } else {
                     handler.post(new Runnable(){
                         public void run(){
-                            cityField.setText(getAddress(geocodeJSON));
+                            yesterdayCityField.setText(getAddress(geocodeJSON));
                             final String lat = getLat(geocodeJSON);
                             final String lng = getLng(geocodeJSON);
                             new Thread() {
                                 public void run() {
-                                    final JSONObject forecastJSON = RemoteFetch.getForecastJSON(lat, lng);
+                                    final JSONObject forecastJSON = RemoteFetch.getYesterdayForecastJSON(lat, lng);
                                     if (forecastJSON == null) {
                                         handler.post(new Runnable() {
                                             public void run() {
@@ -139,17 +138,17 @@ public class WeatherFragment extends Fragment{
     private void renderWeather(JSONObject json){
         try {
             JSONObject currently = json.getJSONObject("currently");
-            detailsField.setText(
+            yesterdayDetailsField.setText(
                     currently.getString("summary").toUpperCase(Locale.US) +
                             "\n" + "Precipitation: " + (int)(currently.getDouble("precipProbability") * 100) + "%" +
                             "\n" + "Humidity: " + (int)(currently.getDouble("humidity") * 100) + " %");
 
-            currentTemperatureField.setText(
+            yesterdayTemperatureField.setText(
                     String.format("%.2f", currently.getDouble("temperature"))+ " ℃");
 
             DateFormat df = DateFormat.getDateTimeInstance();
             String updatedOn = df.format(new Date(currently.getLong("time")*1000));
-            updatedField.setText("Last update: " + updatedOn);
+            yesterdayUpdatedField.setText("Last update: " + updatedOn);
 
         }catch(Exception e){
             Log.e("MakeRelative", "One or more fields not found in the JSON data");
