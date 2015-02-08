@@ -24,8 +24,10 @@ public class WeatherFragment extends Fragment{
 
     TextView cityField;
     TextView updatedField;
-    TextView detailsField;
-    TextView currentTemperatureField;
+    TextView temperatureField;
+    TextView humidityField;
+    TextView precipitationField;
+    TextView windField;
 
     Handler handler;
 
@@ -39,8 +41,10 @@ public class WeatherFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
         cityField = (TextView)rootView.findViewById(R.id.city_field);
         updatedField = (TextView)rootView.findViewById(R.id.updated_field);
-        detailsField = (TextView)rootView.findViewById(R.id.details_field);
-        currentTemperatureField = (TextView)rootView.findViewById(R.id.current_temperature_field);
+        temperatureField = (TextView)rootView.findViewById(R.id.temperature_field);
+        humidityField = (TextView)rootView.findViewById(R.id.humidity_field);
+        precipitationField = (TextView)rootView.findViewById(R.id.precipitation_field);
+        windField = (TextView)rootView.findViewById(R.id.wind_field);
 
         return rootView;
     }
@@ -139,13 +143,11 @@ public class WeatherFragment extends Fragment{
     private void renderWeather(JSONObject json){
         try {
             JSONObject currently = json.getJSONObject("currently");
-            detailsField.setText(
-                    currently.getString("summary").toUpperCase(Locale.US) +
-                            "\n" + "Precipitation: " + (int)(currently.getDouble("precipProbability") * 100) + "%" +
-                            "\n" + "Humidity: " + (int)(currently.getDouble("humidity") * 100) + " %");
+            humidityField.setText((int)(currently.getDouble("humidity") * 100) + "%");
+            precipitationField.setText((int)(currently.getDouble("precipProbability") * 100) + "%");
+            windField.setText((int)(currently.getDouble("windSpeed")) + "mph");
 
-            currentTemperatureField.setText(
-                    String.format("%.2f", currently.getDouble("temperature"))+ " ℃");
+            temperatureField.setText((int)(currently.getDouble("temperature")) + "˚");
 
             DateFormat df = DateFormat.getDateTimeInstance();
             String updatedOn = df.format(new Date(currently.getLong("time")*1000));

@@ -10,48 +10,99 @@
     tools:context=".WeatherActivity$PlaceholderFragment" >
 
     <TextView
-        android:id="@+id/yesterday_city_field"
+        android:id="@+id/yesterday_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
+        android:text="Yesterday"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView
+        android:id="@+id/yesterday_city_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/yesterday_title"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/yesterday_updated_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/yesterday_city_field"
+        android:layout_below="@id/yesterday_city_field"
         android:layout_centerHorizontal="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="13sp" />
 
     <TextView
-        android:id="@+id/weather_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="70sp"
-        />
-
-    <TextView
         android:id="@+id/yesterday_temperature_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/yesterday_updated_field"
+        android:layout_marginTop="50dp"
         android:layout_centerHorizontal="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="40sp" />
+        android:textSize="150sp"
+        />
 
     <TextView
-        android:id="@+id/yesterday_details_field"
+        android:id="@+id/yesterday_humidity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/weather_icon"
+        android:layout_marginTop="70dp"
+        android:layout_below="@id/yesterday_temperature_field"
+        android:text="Humidity"
+      />
+
+    <TextView
+        android:id="@+id/yesterday_precipitation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_below="@id/yesterday_temperature_field"
+        android:layout_centerHorizontal="true"
+        android:text="Precipitation"
+        />
+
+    <TextView
+        android:id="@+id/yesterday_wind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_below="@id/yesterday_temperature_field"
+        android:layout_alignParentRight="true"
+        android:text="Wind Speed"
+        />
+
+    <TextView
+        android:id="@+id/yesterday_humidity_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/yesterday_humidity"
+        android:layout_marginLeft="5dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="30sp"
+        />
+    <TextView
+        android:id="@+id/yesterday_precipitation_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/yesterday_precipitation"
         android:layout_centerHorizontal="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="30sp"
         />
+    <TextView
+        android:id="@+id/yesterday_wind_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/yesterday_wind"
+        android:layout_alignParentRight="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="30sp"
+        />
+
 
 </RelativeLayout>

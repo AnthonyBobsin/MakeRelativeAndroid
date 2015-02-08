@@ -23,8 +23,10 @@ public class YesterdayFragment extends Fragment{
 
     TextView yesterdayCityField;
     TextView yesterdayUpdatedField;
-    TextView yesterdayDetailsField;
     TextView yesterdayTemperatureField;
+    TextView yesterdayHumidityField;
+    TextView yesterdayPrecipitationField;
+    TextView yesterdayWindField;
 
     Handler handler;
 
@@ -38,8 +40,10 @@ public class YesterdayFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_yesterday, container, false);
         yesterdayCityField = (TextView)rootView.findViewById(R.id.yesterday_city_field);
         yesterdayUpdatedField = (TextView)rootView.findViewById(R.id.yesterday_updated_field);
-        yesterdayDetailsField = (TextView)rootView.findViewById(R.id.yesterday_details_field);
         yesterdayTemperatureField = (TextView)rootView.findViewById(R.id.yesterday_temperature_field);
+        yesterdayHumidityField = (TextView)rootView.findViewById(R.id.yesterday_humidity_field);
+        yesterdayPrecipitationField = (TextView)rootView.findViewById(R.id.yesterday_precipitation_field);
+        yesterdayWindField = (TextView)rootView.findViewById(R.id.yesterday_wind_field);
 
         return rootView;
     }
@@ -138,13 +142,12 @@ public class YesterdayFragment extends Fragment{
     private void renderWeather(JSONObject json){
         try {
             JSONObject currently = json.getJSONObject("currently");
-            yesterdayDetailsField.setText(
-                    currently.getString("summary").toUpperCase(Locale.US) +
-                            "\n" + "Precipitation: " + (int)(currently.getDouble("precipProbability") * 100) + "%" +
-                            "\n" + "Humidity: " + (int)(currently.getDouble("humidity") * 100) + " %");
 
-            yesterdayTemperatureField.setText(
-                    String.format("%.2f", currently.getDouble("temperature"))+ " ℃");
+            yesterdayHumidityField.setText((int)(currently.getDouble("humidity") * 100) + "%");
+            yesterdayPrecipitationField.setText((int)(currently.getDouble("precipProbability") * 100) + "%");
+            yesterdayWindField.setText((int)(currently.getDouble("windSpeed")) + "mph");
+
+            yesterdayTemperatureField.setText((int)(currently.getDouble("temperature")) + "˚");
 
             DateFormat df = DateFormat.getDateTimeInstance();
             String updatedOn = df.format(new Date(currently.getLong("time")*1000));
